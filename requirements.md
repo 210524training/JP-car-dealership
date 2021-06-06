@@ -32,7 +32,7 @@ Total: 25 Story Points
     - 2 points
 - As an employee, I can add a car to the lot DONE
     - 3 points
-- As a customer, I can view the cars on the lot (today)
+- As a customer, I can view the cars on the lot DONE
     - 1 point
 - As a customer, I can make an offer for a car (will be done in the view all car menu)
     - 3 points
@@ -46,7 +46,7 @@ Total: 25 Story Points
     - 3 points
 - As an employee, I can remove a car from the lot DONE
     - 2 points
-- As a customer, I can view the cars that I own (today)
+- As a customer, I can view the cars that I own DONE
     - 1 point
 - As a customer, I can view my remaining payments for a car (will be in the view my car menu) (maybe)
     - 1 point

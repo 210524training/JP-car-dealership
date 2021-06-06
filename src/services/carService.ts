@@ -6,13 +6,31 @@ class CarService {
     private repo = CarRepo,
   ) {}
 
+  async displayAllUnowned() {
+    const cars: Car[] = await this.repo.findUnownedCars();
+
+    // eslint-disable-next-line no-plusplus
+    for(let i = 0; i < cars.length; i++) {
+      console.log(`${i}: ${cars[i].carName}`);
+    }
+  }
+
+  async displayMyCars(userName: string) {
+    const cars: Car[] = await this.repo.findMyCars(userName);
+
+    // eslint-disable-next-line no-plusplus
+    for(let i = 0; i < cars.length; i++) {
+      console.log(`${i}: ${cars[i].carName}`);
+    }
+  }
+
   async displayAllCars(): Promise<Car[]> {
     const cars: Car[] = await this.repo.getAll();
 
     // eslint-disable-next-line no-plusplus
     for(let i = 0; i < cars.length; i++) {
       let output = `${i}: ${cars[i].carName} `;
-      output += ` Owner: ${cars[i].owner || 'No owner'} `;
+      output += ` Owner: ${cars[i].ownerName || 'No owner'} `;
       output += ` Payments left: ${cars[i].payments || '0'} `;
       console.log(output);
     }
@@ -32,7 +50,7 @@ class CarService {
 
   async removeCar(carId: number, cars: Car[]): Promise<boolean> {
     // check if car exists
-    if(!carId || carId >= cars.length || carId < 0) {
+    if(Number.isNaN(carId) || carId >= cars.length || carId < 0) {
       console.log('You have entered an invalid input, please try agiain');
       return false;
     }

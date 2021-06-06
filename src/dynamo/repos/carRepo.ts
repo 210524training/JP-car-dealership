@@ -13,12 +13,52 @@ class CarRepo {
       ProjectionExpression: '#name, #own, #pay',
       ExpressionAttributeNames: {
         '#name': 'carName',
-        '#own': 'owner',
+        '#own': 'ownerName',
         '#pay': 'payments',
       },
     };
 
     const data = await this.docClient.scan(params).promise();
+
+    if(data.Items) {
+      return data.Items as Car[];
+    }
+
+    return [];
+  }
+
+  async findUnownedCars(): Promise<Car[]> {
+    const params: DocumentClient.ScanInput = {
+      TableName: 'cars',
+      ProjectionExpression: '#name, #own, #pay',
+      FilterExpression: 'attribute_not_exists(#own)',
+      ExpressionAttributeNames: {
+        '#name': 'carName',
+        '#own': 'ownerName',
+        '#pay': 'payments',
+      },
+    };
+
+    const data = await this.docClient.scan(params).promise();
+
+    if(data.Items) {
+      return data.Items as Car[];
+    }
+
+    return [];
+  }
+
+  async findMyCars(userName: string): Promise<Car[]> {
+    const params: DocumentClient.QueryInput = {
+      TableName: 'cars',
+      IndexName: 'owner-index',
+      KeyConditionExpression: 'ownerName = :o_name',
+      ExpressionAttributeValues: {
+        ':o_name': userName,
+      },
+    };
+
+    const data = await this.docClient.query(params).promise();
 
     if(data.Items) {
       return data.Items as Car[];

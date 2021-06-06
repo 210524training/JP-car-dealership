@@ -11,7 +11,13 @@ async function customerMenu() {
     const questionString = 'Type V to veiw cars on the lot\nType O to view cars you own\n'
       + 'Type P to view your remaining payments\nType Q to logout\n';
     const input : string = await getUserInput(questionString);
-    if(input === 'Q' || input === 'q') {
+    if(input === 'V' || input === 'v') {
+      await carService.displayAllUnowned();
+    } else if(input === 'O' || input === 'o') {
+      if(userService.currentUser) {
+        await carService.displayMyCars(userService.currentUser.userName);
+      }
+    } else if(input === 'Q' || input === 'q') {
       userService.logout();
       cont = false;
     }
