@@ -2,6 +2,7 @@
 import getUserInput from '../services/input';
 import userService from '../services/userService';
 import carService from '../services/carService';
+import offerService from '../services/offerService';
 
 async function customerMenu() {
   let cont = true;
@@ -11,12 +12,23 @@ async function customerMenu() {
     const questionString = 'Type V to veiw cars on the lot\nType O to view cars you own\n'
       + 'Type P to view your remaining payments\nType Q to logout\n';
     const input : string = await getUserInput(questionString);
+    // view cars
     if(input === 'V' || input === 'v') {
-      await carService.displayAllUnowned();
+      const cars = await carService.displayAllUnowned();
+      const idQuestion = 'Enter the index of the car you would like to make an offer for. Type anything else to cancel.\n';
+      const carId = Number(await getUserInput(idQuestion));
+      if(!Number.isNaN(carId) && carId >= 0 && carId < cars.length && userService.currentUser) {
+        const offer = await getUserInput('What is your offer?\n');
+        const carname = cars[carId].carName;
+        const username = userService.currentUser.userName;
+        await offerService.addOffer(carname, username, Number(offer));
+      }
+    // view my cars
     } else if(input === 'O' || input === 'o') {
       if(userService.currentUser) {
         await carService.displayMyCars(userService.currentUser.userName);
       }
+    // quit
     } else if(input === 'Q' || input === 'q') {
       userService.logout();
       cont = false;
@@ -32,15 +44,28 @@ async function employeeMenu() {
     const questionString = 'Type A to add cars to the lot\nType R to remove cars from the lot\n'
       + 'Type O to view offers\nType P to view all payments\nType Q to logout\n';
     const input : string = await getUserInput(questionString);
+    // add car
     if(input === 'A' || input === 'a') {
       const carname = await getUserInput('What is the name of the new car?\n');
       await carService.addCar(carname);
+    // remove cars
     } else if(input === 'R' || input === 'r') {
       const cars = await carService.displayAllCars();
       // ask which one they want to delete
-      const carId = await getUserInput('Which car do you want deleted? Input the number that appears at the start of the line.\n');
+      const carId = await getUserInput('Enter the index of the car you would like deleted.\n');
       // delete car if valid number
       await carService.removeCar(Number(carId), cars);
+    } else if(input === 'O' || input === 'o') {
+      const offers = await offerService.displayAllOffers();
+      const offerIndex = await getUserInput('Enter the index of the offer you would like to accept/reject.\n');
+      const decision = await getUserInput('Press A to accept, Press R to reject, press anything else to cancel.\n');
+      if(decision === 'R' || decision === 'r') {
+        await offerService.rejectOffer(Number(offerIndex), offers);
+      } else if(decision === 'A' || decision === 'a') {
+        // set the owner of the offer's car to be the offerer's name and payment to be offer amount
+        // delete all offers on this car
+        await offerService.acceptOffer(Number(offerIndex), offers);
+      }
     } else if(input === 'Q' || input === 'q') {
       userService.logout();
       cont = false;

@@ -34,7 +34,7 @@ Total: 25 Story Points
     - 3 points
 - As a customer, I can view the cars on the lot DONE
     - 1 point
-- As a customer, I can make an offer for a car (will be done in the view all car menu)
+- As a customer, I can make an offer for a car DONE
     - 3 points
 - As an employee, I can accept or reject a pending offer for a car
     - 2 points

@@ -1,7 +1,7 @@
-export default class offer {
+export default class Offer {
   constructor(
-      public carOffered: string,
-      public userBuying: string,
-      public offerPrice: number,
+      public carName: string,
+      public userName: string,
+      public offerAmount: number,
   ) {}
 }

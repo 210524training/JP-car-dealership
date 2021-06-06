@@ -6,13 +6,15 @@ class CarService {
     private repo = CarRepo,
   ) {}
 
-  async displayAllUnowned() {
+  async displayAllUnowned(): Promise<Car[]> {
     const cars: Car[] = await this.repo.findUnownedCars();
 
     // eslint-disable-next-line no-plusplus
     for(let i = 0; i < cars.length; i++) {
       console.log(`${i}: ${cars[i].carName}`);
     }
+
+    return cars;
   }
 
   async displayMyCars(userName: string) {
@@ -57,6 +59,14 @@ class CarService {
 
     if(!await this.repo.removeCar(cars[carId].carName)) {
       console.log('Car could not be removed from lot');
+      return false;
+    }
+    return true;
+  }
+
+  async updateCar(carName: string, ownerName: string, payments: number): Promise<boolean> {
+    if(!await this.repo.updateCar(new Car(carName, ownerName, payments))) {
+      console.log('Car could not be updated');
       return false;
     }
     return true;

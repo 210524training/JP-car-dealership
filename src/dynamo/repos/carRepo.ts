@@ -107,6 +107,32 @@ class CarRepo {
       return false;
     }
   }
+
+  async updateCar(car: Car): Promise<boolean> {
+    const params: DocumentClient.UpdateItemInput = {
+      TableName: 'cars',
+      Key: {
+        carName: car.carName,
+      },
+      ReturnConsumedCapacity: 'TOTAL',
+      UpdateExpression: 'SET ownerName = :n, payments = :p',
+      ExpressionAttributeValues: {
+        ':p': car.payments,
+        ':n': car.ownerName,
+      },
+      ReturnValues: 'UPDATED_NEW',
+    };
+
+    try {
+      const result = await this.docClient.update(params).promise();
+
+      console.log(result);
+      return true;
+    } catch(error) {
+      console.log(error);
+      return false;
+    }
+  }
 }
 
 export default new CarRepo();
