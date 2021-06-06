@@ -1,34 +1,56 @@
-import fs from 'fs';
+import userRepo from '../dynamo/repos/userRepo';
 import User from '../modules/user';
 
 class UserService {
+  public currentUser : User | undefined;
+
   constructor(
-      public users: User[] = [],
+    private repo = userRepo,
   ) {}
 
-  findUserName(userName: string): User | undefined {
-    return this.users.find((user) => user.userName === userName);
+  // find the user with the given name
+  async findUserName(userName: string): Promise<User | undefined> {
+    const user = await this.repo.getUser(userName);
+    return user;
   }
 
+  // adds new user to database
   // Returns true on successful registration, false otherwise
-  register(userName: string, password: string): boolean {
-    if(this.findUserName(userName)) {
-      console.log('User name already taken');
+  async register(userName: string, password: string): Promise<boolean> {
+    const user = await this.findUserName(userName);
+    if(user) {
+      console.log('User name already taken\n');
       return false;
     }
 
-    this.users.push(new User(userName, password, 'Customer'));
-    return true;
+    return this.repo.addUser(new User(userName, password, 'Customer'));
   }
 
-  save() {
-    const usersString = JSON.stringify(this.users);
-    fs.writeFileSync('users.json', usersString);
+  // checks if a user exists in the DB and the password is correct then sets currentUser
+  // returns true on successful login false otherwise
+  async login(userName: string, password: string): Promise<boolean> {
+    if(this.currentUser) {
+      // good place for debug logging and error handling
+      console.log('Error: A user is already logged in');
+      return false;
+    }
+
+    const loginUser = await this.findUserName(userName);
+
+    if(!loginUser) {
+      console.log('User does not exist\n');
+    } else if(loginUser.password !== password) {
+      console.log('Password is incorrect\n');
+    } else {
+      this.currentUser = loginUser;
+      return true;
+    }
+    return false;
   }
 
-  async load() {
-    const data = fs.readFileSync('users.json');
-    this.users = JSON.parse(data.toString());
+  // clears current user
+  logout() {
+    this.currentUser = undefined;
   }
 }
 
