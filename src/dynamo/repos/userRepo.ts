@@ -1,6 +1,7 @@
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import dynamo from '../dynamo';
 import User from '../../modules/user';
+import log from '../../log';
 
 class UserRepo {
   constructor(
@@ -20,11 +21,11 @@ class UserRepo {
 
     try {
       const result = await this.docClient.put(params).promise();
-
-      console.log(result); // good place for logging
+      log.debug('Succesful add to user table');
+      log.debug(result);
       return true;
     } catch(error) {
-      console.log(error); // also good place for logging
+      log.error(error);
       return false;
     }
   }
@@ -43,9 +44,15 @@ class UserRepo {
       },
     };
 
-    const data = await this.docClient.get(params).promise();
-
-    return data.Item as User | undefined;
+    try {
+      const data = await this.docClient.get(params).promise();
+      log.debug('Succesful retrieval of user data');
+      log.debug(data);
+      return data.Item as User | undefined;
+    } catch(error) {
+      log.error(error);
+      return undefined;
+    }
   }
 }
 

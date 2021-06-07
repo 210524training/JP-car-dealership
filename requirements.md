@@ -36,11 +36,11 @@ Total: 25 Story Points
     - 1 point
 - As a customer, I can make an offer for a car DONE
     - 3 points
-- As an employee, I can accept or reject a pending offer for a car
+- As an employee, I can accept or reject a pending offer for a car DONE
     - 2 points
-- As the system, I update a car to an owned state when an offer is accepted
+- As the system, I update a car to an owned state when an offer is accepted DONE
     - 2 points
-- As the system, I reject all other pending offers for a car when an offer is accepted
+- As the system, I reject all other pending offers for a car when an offer is accepted DONE
     - 3 points
 - As a user, I can register for a customer account DONE
     - 3 points
@@ -48,9 +48,9 @@ Total: 25 Story Points
     - 2 points
 - As a customer, I can view the cars that I own DONE
     - 1 point
-- As a customer, I can view my remaining payments for a car (will be in the view my car menu) (maybe)
+- As a customer, I can view my remaining payments for a car DONE
     - 1 point
 - As an employee, I can view all payments (maybe)
     - 1 point
-- As the system, I can calculate the monthly payment (maybe)
+- As the system, I can calculate the monthly payment DONE
     - 1 point

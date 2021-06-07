@@ -12,7 +12,7 @@ async function customerMenu() {
     const questionString = 'Type V to veiw cars on the lot\nType O to view cars you own\n'
       + 'Type P to view your remaining payments\nType Q to logout\n';
     const input : string = await getUserInput(questionString);
-    // view cars
+    // view all cars
     if(input === 'V' || input === 'v') {
       const cars = await carService.displayAllUnowned();
       const idQuestion = 'Enter the index of the car you would like to make an offer for. Type anything else to cancel.\n';
@@ -27,6 +27,10 @@ async function customerMenu() {
     } else if(input === 'O' || input === 'o') {
       if(userService.currentUser) {
         await carService.displayMyCars(userService.currentUser.userName);
+      }
+    } else if(input === 'P' || input === 'p') {
+      if(userService.currentUser) {
+        await carService.displayMyPayments(userService.currentUser.userName);
       }
     // quit
     } else if(input === 'Q' || input === 'q') {
@@ -66,6 +70,8 @@ async function employeeMenu() {
         // delete all offers on this car
         await offerService.acceptOffer(Number(offerIndex), offers);
       }
+    } else if(input === 'P' || input === 'p') {
+      await carService.displayAllOwned();
     } else if(input === 'Q' || input === 'q') {
       userService.logout();
       cont = false;

@@ -1,4 +1,5 @@
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
+import log from '../../log';
 import Car from '../../modules/car';
 import dynamo from '../dynamo';
 
@@ -18,12 +19,41 @@ class CarRepo {
       },
     };
 
-    const data = await this.docClient.scan(params).promise();
-
-    if(data.Items) {
-      return data.Items as Car[];
+    try {
+      const data = await this.docClient.scan(params).promise();
+      log.debug('Succesfull scan of car table');
+      log.debug(data);
+      if(data.Items) {
+        return data.Items as Car[];
+      }
+    } catch(error) {
+      log.error(error);
     }
 
+    return [];
+  }
+
+  async findOwnedCars(): Promise<Car[]> {
+    const params: DocumentClient.ScanInput = {
+      TableName: 'cars',
+      ProjectionExpression: '#name, #own, #pay',
+      FilterExpression: 'attribute_exists(#own)',
+      ExpressionAttributeNames: {
+        '#name': 'carName',
+        '#own': 'ownerName',
+        '#pay': 'payments',
+      },
+    };
+    try {
+      const data = await this.docClient.scan(params).promise();
+      log.debug('Succesfull scan of car table');
+      log.debug(data);
+      if(data.Items) {
+        return data.Items as Car[];
+      }
+    } catch(error) {
+      log.error(error);
+    }
     return [];
   }
 
@@ -38,13 +68,16 @@ class CarRepo {
         '#pay': 'payments',
       },
     };
-
-    const data = await this.docClient.scan(params).promise();
-
-    if(data.Items) {
-      return data.Items as Car[];
+    try {
+      const data = await this.docClient.scan(params).promise();
+      log.debug('Succesfull scan of car table');
+      log.debug(data);
+      if(data.Items) {
+        return data.Items as Car[];
+      }
+    } catch(error) {
+      log.error(error);
     }
-
     return [];
   }
 
@@ -58,12 +91,16 @@ class CarRepo {
       },
     };
 
-    const data = await this.docClient.query(params).promise();
-
-    if(data.Items) {
-      return data.Items as Car[];
+    try {
+      const data = await this.docClient.query(params).promise();
+      log.debug('Succesfull query of car table');
+      log.debug(data);
+      if(data.Items) {
+        return data.Items as Car[];
+      }
+    } catch(error) {
+      log.error(error);
     }
-
     return [];
   }
 
@@ -80,11 +117,11 @@ class CarRepo {
 
     try {
       const result = await this.docClient.put(params).promise();
-
-      console.log(result); // good place for logging
+      log.debug('Succesfull addition to car table');
+      log.debug(result);
       return true;
     } catch(error) {
-      console.log(error); // also good place for logging
+      log.error(error);
       return false;
     }
   }
@@ -99,11 +136,11 @@ class CarRepo {
 
     try {
       const result = await this.docClient.delete(params).promise();
-
-      console.log(result); // good place for logging
+      log.debug('Succesfull removal from car table');
+      log.debug(result);
       return true;
     } catch(error) {
-      console.log(error); // also good place for logging
+      log.error(error);
       return false;
     }
   }
@@ -125,11 +162,11 @@ class CarRepo {
 
     try {
       const result = await this.docClient.update(params).promise();
-
-      console.log(result);
+      log.debug('Succesfull update to car table');
+      log.debug(result);
       return true;
     } catch(error) {
-      console.log(error);
+      log.error(error);
       return false;
     }
   }

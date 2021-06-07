@@ -6,6 +6,21 @@ class CarService {
     private repo = CarRepo,
   ) {}
 
+  async displayAllOwned(): Promise<Car[]> {
+    const cars: Car[] = await this.repo.findOwnedCars();
+
+    let totalPayments = 0;
+    // eslint-disable-next-line no-plusplus
+    for(let i = 0; i < cars.length; i++) {
+      const payment: number = cars[i].payments || 0;
+      console.log(`${i}: ${cars[i].carName} has $${payment} remaining to be paid. The monthly payment is $${payment / 50}`);
+      totalPayments += payment;
+    }
+    console.log(`The total remaining payments come out to $${totalPayments}`);
+
+    return cars;
+  }
+
   async displayAllUnowned(): Promise<Car[]> {
     const cars: Car[] = await this.repo.findUnownedCars();
 
@@ -15,6 +30,19 @@ class CarService {
     }
 
     return cars;
+  }
+
+  async displayMyPayments(userName: string) {
+    const cars: Car[] = await this.repo.findMyCars(userName);
+
+    let totalPayments = 0;
+    // eslint-disable-next-line no-plusplus
+    for(let i = 0; i < cars.length; i++) {
+      console.log(`Your ${cars[i].carName} has $${cars[i].payments} remaining to be paid`);
+      console.log(`The monthly payment is $${(cars[i].payments || 0) / 50}`);
+      totalPayments += cars[i].payments || 0;
+    }
+    console.log(`Your total monthly payment is $${totalPayments / 50}`);
   }
 
   async displayMyCars(userName: string) {

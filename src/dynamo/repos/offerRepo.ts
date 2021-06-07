@@ -1,4 +1,5 @@
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
+import log from '../../log';
 import Offer from '../../modules/offer';
 import dynamo from '../dynamo';
 
@@ -22,10 +23,11 @@ class CarRepo {
     try {
       const result = await this.docClient.put(params).promise();
 
-      console.log(result); // good place for logging
+      log.debug('succesfull addition to offer table');
+      log.debug(result);
       return true;
     } catch(error) {
-      console.log(error); // also good place for logging
+      log.error(error);
       return false;
     }
   }
@@ -41,12 +43,16 @@ class CarRepo {
       },
     };
 
-    const data = await this.docClient.scan(params).promise();
-
-    if(data.Items) {
-      return data.Items as Offer[];
+    try {
+      const data = await this.docClient.scan(params).promise();
+      log.debug('Succesfull scan of offer table');
+      log.debug(data);
+      if(data.Items) {
+        return data.Items as Offer[];
+      }
+    } catch(error) {
+      log.error(error);
     }
-
     return [];
   }
 
@@ -62,10 +68,11 @@ class CarRepo {
     try {
       const result = await this.docClient.delete(params).promise();
 
-      console.log(result); // good place for logging
+      log.debug('Succesfull removal from offer table');
+      log.debug(result);
       return true;
     } catch(error) {
-      console.log(error); // also good place for logging
+      log.error(error);
       return false;
     }
   }
